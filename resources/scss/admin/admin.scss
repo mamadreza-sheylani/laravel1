@@ -1,0 +1,52 @@
+// font awsome cdn
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css";
+// Import Custom SB Admin 2 Variables (Overrides Default Bootstrap Variables)
+@import "variables.scss";
+// Import Bootstrap
+@import "~bootstrap/scss/bootstrap.scss";
+// Import Custom SB Admin 2 Mixins and Components
+@import "~bootstrap-select/sass/bootstrap-select.scss"; //bootstrap-select
+//importing persian datetime picker
+@import "~md.bootstrappersiandatetimepicker/dist/jquery.md.bootstrap.datetimepicker.style.css";
+@import "mixins.scss";
+@import "global.scss";
+@import "utilities.scss";
+// Custom Components
+@import "dropdowns.scss";
+@import "navs.scss";
+@import "buttons.scss";
+@import "cards.scss";
+@import "charts.scss";
+@import "login.scss";
+@import "error.scss";
+@import "footer.scss";
+@font-face {
+    font-family: 'Vazir';
+    src: url("../../fonts/Vazir.ttf") format('truetype'), url("../../fonts/Vazir.eot") format('eot'), url("../../fonts/Vazir.woff") format('woff'), url("../../fonts/Vazir.woff2") format('woff2');
+}
+
+body {
+    direction: rtl;
+    font-family: Vazir !important;
+    text-align: right !important;
+}
+
+#registerCheckBox::before {
+    right: -1.5rem;
+}
+
+#registerCheckBox::after {
+    right: -1.5rem;
+}
+
+.custom-file-label::after {
+    content: 'فایل';
+}
+
+.custom-file-label::after {
+    right: unset;
+    left: 0;
+    border-left: unset;
+    border-right: inherit;
+    border-radius: 0.35rem 0 0 0.35rem;
+}
