@@ -21,14 +21,16 @@ Cart
 </div>
 
 <div class="cart-main-area pt-95 pb-100 text-right" style="direction: rtl;">
-    @if (! \Cart::getContent())
-    <div class="container cart-empty-content" style="display: none;">
+    @if (\Cart::isEmpty())
+    <div class="container cart-empty-content">
         <div class="row justify-content-center">
             <div class="col-md-6 text-center">
-                <i class="sli sli-basket"></i>
-                <h2 class="font-weight-bold my-4">سبد خرید خالی است.</h2>
-                <p class="mb-40">شما هیچ کالایی در سبد خرید خود ندارید.</p>
-                <a href="shop.html" > ادامه خرید </a>
+                <i class="sli sli-basket" ></i>
+                <div style="margin-top:50px">
+                    <h2 class="font-weight-bold my-4" >سبد خرید خالی است.</h2>
+                    <p class="mb-40">شما هیچ کالایی در سبد خرید خود ندارید.</p>
+                    <a href="{{route('home.index')}}" > ادامه خرید </a>
+                </div>
             </div>
         </div>
     </div>
@@ -118,8 +120,9 @@ Cart
                             </div>
                             <div class="discount-code">
                                 <p>کد تخفیف را با حرف های کوچک وارد کنید</p>
-                                <form>
-                                    <input type="text" required="" name="name">
+                                <form action="{{route('home.coupons.check')}}" method="post">
+                                    @csrf
+                                    <input type="text" name="code" autocomplete="off">
                                     <button class="cart-btn-2" type="submit"> ثبت </button>
                                 </form>
                             </div>

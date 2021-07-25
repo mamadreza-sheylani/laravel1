@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\ProductVariation;
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use Cart;
 
 class CartController extends Controller
@@ -78,8 +79,29 @@ class CartController extends Controller
 
     public function remove($rowId){
 
-        dd($rowId);
+        Cart::remove($rowId);
+        alert()->success('You removed 1 item from your cart' , 'Removed Item');
+        return redirect()->back();
 
+    }
+
+    public function clear(){
+        Cart::clear();
+        alert()->warning('You Deleted Your Cart' , 'Deleted Cart');
+        return redirect()->back();
+    }
+
+    public function checkCoupon(Request $request){
+        $request->validate([
+            'code'=>'required'
+        ]);
+        $coupon = Coupon::where('code',$request->code)->first();
+        if($coupon){
+
+            dd(Cart::getTotal()-(Cart::getTotal()*20/100));
+        }else{
+            alert()->info("There is Not Such Coupon" ,"Sorry")->persistent('OK');
+        }
     }
 
 }

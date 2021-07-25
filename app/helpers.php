@@ -27,3 +27,16 @@ function convertShamsiToGregorianDate($date)
 
     return implode("-", $arrayGergorianDate) . " " . $shamsiDateSplit[3];
 }
+
+function convertEnglishToPersianDate($date)
+{
+    if($date == null){
+        return null;
+    }
+    $pattern = "/[-\s]/";
+    $englishDateSplit = preg_split($pattern, $date);
+
+    $arrayPersianDate = verta()->getJalali($englishDateSplit[0], $englishDateSplit[1], $englishDateSplit[2]);
+
+    return $englishDateSplit[3]." ".implode("-", $arrayPersianDate);
+}

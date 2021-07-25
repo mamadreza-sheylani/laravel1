@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Home\CommentController as HomeCommentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Home\ProductController as HomeProductController ;
@@ -42,6 +43,7 @@ Route::prefix('/admin-panel/management')->name('admin.')->group(function(){
     Route::resource('tags' , TagController::class);
     Route::resource('products' , ProductController::class);
     Route::resource('comments' , CommentController::class);
+    Route::resource('coupons' , CouponController::class);
 
     //get Category Attribute for product@create from category controller
     Route::get('/category-attributes/{category}' , [CategoryController::class , 'getCategoryAttributes']);
@@ -93,10 +95,10 @@ Route::post('/comments/{product}' , [HomeCommentController::class , 'store'])->n
 //add to cart
 Route::get('/cart',[CartController::class , 'index'])->name('home.cart.index');
 Route::post('/add-to-cart',[CartController::class , 'add'])->name('home.cart.add');
-Route::delete('/remove-from-cart/{rowId}',[CartController::class , 'remove'])->name('home.cart.remove');
+Route::get('/remove-from-cart/{rowId}',[CartController::class , 'remove'])->name('home.cart.remove');
 Route::put('/cart',[CartController::class , 'update'])->name('home.cart.update');
 Route::get('/clear-cart',[CartController::class , 'clear'])->name('home.cart.clear');
-
+Route::post('/check-coupon' , [CartController::class , 'checkCoupon'])->name('home.coupons.check');
 
 Route::get('/test', function () {
     dd(\Cart::getContent());
