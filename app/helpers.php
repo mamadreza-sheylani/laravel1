@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon ;
+use Darryldecode\Cart\Cart;
 
 function generateFileName($name){
 
@@ -39,4 +42,37 @@ function convertEnglishToPersianDate($date)
     $arrayPersianDate = verta()->getJalali($englishDateSplit[0], $englishDateSplit[1], $englishDateSplit[2]);
 
     return $englishDateSplit[3]." ".implode("-", $arrayPersianDate);
+}
+
+function checkCoupon($code){
+
+    $coupon = Coupon::where('code' , $code)->where('expire_at','>' ,Carbon::now())->first();
+    if($coupon == null){
+        return ["error"=>"این کوپن وجود ندارد"];
+    }
+    if(Order::where('user_id' , auth()->id())->where('coupon_id' , $coupon->id)->where("payment_status" , 1)->exists()){
+        return ['error'=>'شما قبلا از این کد تخفیف استفاده کردید'];
+    }
+
+    if($coupon->getRawOriginal('type')=="amount"){
+        session()->put('coupon' , ['coupon'=>$coupon->code , 'amount' => $coupon->amount]);
+
+    }else{
+        $total = \Cart::getTotal();
+        $amount = (($total*$coupon->precentage)/100) > $coupon->max_precentage_amount ? $coupon->max_precentage_amount: (($total*$coupon->precentage)/100);
+        session()->put('coupon' , ['coupon'=>$coupon->code , 'amount'=>$amount]);
+        return ['success'=>'کوپن برای شما اعمال شد'];
+    }
+}
+
+function cartTotalAmount(){
+    if(session()->has('coupon')){
+        if(session()->get('coupon.amount')>\Cart::getTotal()){
+            return 0;
+        }else{
+            return \Cart::getTotal() - session()->get('coupon.amount');
+        }
+    }else{
+        return \Cart::getTotal();
+    }
 }

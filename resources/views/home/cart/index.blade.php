@@ -118,9 +118,9 @@ Cart
                             <div class="title-wrap">
                                 <h4 class="cart-bottom-title section-bg-gray"> کد تخفیف </h4>
                             </div>
-                            <div class="discount-code">
+                            <div class="discount-code" id="discount-code">
                                 <p>کد تخفیف را با حرف های کوچک وارد کنید</p>
-                                <form action="{{route('home.coupons.check')}}" method="post">
+                                <form action="{{route('home.coupons.check')}}" method="POST">
                                     @csrf
                                     <input type="text" name="code" autocomplete="off">
                                     <button class="cart-btn-2" type="submit"> ثبت </button>
@@ -141,6 +141,17 @@ Cart
                                     تومان
                                 </span>
                             </h5>
+                            @if (session()->has('coupon'))
+
+                            <hr>
+                            <h5>
+                                مبلغ تخفیف کوپن :
+                                <span style="color:red">
+                                    {{number_format(session()->get("coupon.amount"))}}
+                                    تومان
+                                </span>
+                            </h5>
+                            @endif
                             <div class="total-shipping">
                                 <h5>
                                     هزینه ارسال :
@@ -154,7 +165,7 @@ Cart
                             <h4 class="grand-totall-title">
                                 جمع کل:
                                 <span>
-                                    {{number_format((\Cart::getTotal()+8000))}}
+                                    {{number_format(cartTotalAmount()+8000)}}
                                     تومان
                                 </span>
                             </h4>

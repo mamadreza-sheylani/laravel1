@@ -95,14 +95,23 @@ class CartController extends Controller
         $request->validate([
             'code'=>'required'
         ]);
-        $coupon = Coupon::where('code',$request->code)->first();
-        if($coupon){
 
-            dd(Cart::getTotal()-(Cart::getTotal()*20/100));
+        //using a helper written in helper.php
+        $result = checkCoupon($request->code);
+        if(array_key_exists('error' , $result)){
+            alert()->warning($result['error'] , 'Coupon Not Found');
         }else{
-            alert()->info("There is Not Such Coupon" ,"Sorry")->persistent('OK');
+            alert()->success($result['success'] , 'Coupen Submited');
         }
+        return redirect()->back();
+        //dd($result);
+
     }
+
+    // public function getCouponsInfo($couponId){
+    //     $query = Coupon::where('code' , $couponId)->first();
+    //     return $query;
+    // }
 
 }
 // errors are for Cart there are not real errors
