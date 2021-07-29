@@ -8,13 +8,15 @@ use Illuminate\Http\Request;
 use App\Models\ProductVariation;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Models\Province;
 use Cart;
 
 class CartController extends Controller
 {
     public function index(){
         $cart = Cart::getContent();
-        return view('home.cart.index' , compact('cart'));
+        return $cart;
+        //return view('home.cart.index' , compact('cart'));
     }
 
 
@@ -108,10 +110,16 @@ class CartController extends Controller
 
     }
 
-    // public function getCouponsInfo($couponId){
-    //     $query = Coupon::where('code' , $couponId)->first();
-    //     return $query;
-    // }
+    public function checkout(){
+        if(\Cart::isEmpty()){
+            alert()->info("return and add some items to your cart please" , "Cart Is Empty");
+            return redirect()->back();
+        }
+        $cart=Cart::getContent();
+        $user_addresses =  auth()->user()->user_addresses;
+        $provinces = Province::all();
+        return view('home.cart.checkout' , compact('cart' , 'user_addresses','provinces'));
+    }
 
 }
 // errors are for Cart there are not real errors

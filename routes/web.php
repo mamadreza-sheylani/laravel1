@@ -71,6 +71,7 @@ Route::prefix('/profile')->name('home.')->middleware('auth')->group(function(){
     Route::get('/orders' , [ProfileController::class , 'orders'])->name('profile.orders');
     Route::get('/addresses' , [AddressController::class , 'index'])->name('profile.address');
     Route::post('/addresses' , [AddressController::class , 'store'])->name('profile.address.store');
+    Route::put('/address/{address}' , [AddressController::class , 'update'])->name('profile.address.update');
     Route::get('/wishlist' , [WishlistController::class , 'index'])->name('profile.wishlist');
 });
 //geting cities list api
@@ -105,6 +106,9 @@ Route::get('/clear-cart',[CartController::class , 'clear'])->name('home.cart.cle
 Route::post('/check-coupon' , [CartController::class , 'checkCoupon'])->name('home.coupons.check');
 //trying to use ajax with jquery
 Route::get('/coupons-info/{coupon:id}' , [CartController::class , 'getCouponsInfo']);
+//checkout
+Route::get('/checkout' ,[CartController::class , 'checkout'])->name('home.orders.checkout');
+
 
 Route::get('/test', function () {
     dd(\Cart::getContent());

@@ -7,6 +7,7 @@ use App\Models\Address;
 use App\Models\City;
 use App\Models\Province;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AddressController extends Controller
 {
@@ -17,10 +18,9 @@ class AddressController extends Controller
      */
     public function index()
     {
+        $user_addresses = Address::where("user_id" , auth()->user()->id)->get();
         $provinces = Province::all();
-        $cities = City::all();
-        // return $cities;
-        return view('home.profile.address' , compact('cities' , 'provinces'));
+        return view('home.profile.address' , compact('user_addresses' , 'provinces'));
     }
 
     /**
@@ -95,9 +95,34 @@ class AddressController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Address $address)
     {
-        //
+        $request->validateWithBag('addressUpdate',[
+            'title'=>'required',
+            'cellphone' => 'required' ,
+            'province_id' =>'required',
+            'city_id' => 'required' ,
+            'address' => 'required' ,
+            'postal_code' => 'required'
+        ]);
+        try {
+            DB::beginTransaction();
+            $address->update([
+                'title'=>$request->title,
+                'cellphone' => $request->cellphone ,
+                'province_id' =>$request->province_id,
+                'city_id' =>$request->city_id ,
+                'address' => $request->address ,
+                'postal_code' => $request->postal_code
+            ]);
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            alert()->success("Error : ".$ex , "Something Went Wrong")->persistent('ok');
+            return redirect()->back();
+        }
+        alert()->success("You updated an Address" , "Thank You")->persistent('Ok');
+        return redirect()->route('home.profile.address');
     }
 
     /**
