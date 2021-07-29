@@ -2,6 +2,37 @@
 @section('title')
 Profile &#8226; {{auth()->user()->name}} &#8226; Addresses
 @endsection
+@section('script')
+    <script>
+        $('.province-select').change(function() {
+
+            var provinceID = $(this).val();
+
+            if (provinceID) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('/get-province-cities-list') }}?province_id=" + provinceID,
+                    success: function(res) {
+                        if (res) {
+                            $(".city-select").empty();
+
+                            $.each(res, function(key , city) {
+                                console.log(city);
+                                $(".city-select").append('<option value="' + city.id + '">' +
+                                    city.name + '</option>');
+                            });
+
+                        } else {
+                            $(".city-select").empty();
+                        }
+                    }
+                });
+            } else {
+                $(".city-select").empty();
+            }
+        });
+    </script>
+@endsection
 @section('content')
 
 <div class="breadcrumb-area pt-35 pb-35 bg-gray" style="direction: rtl;">
@@ -72,6 +103,11 @@ Profile &#8226; {{auth()->user()->name}} &#8226; Addresses
                                                         عنوان
                                                     </label>
                                                     <input type="text" required="" name="title">
+                                                    @error('title')
+                                                        <p class="input-error-validation">
+                                                            {{$message}}
+                                                        </p>
+                                                    @enderror
                                                 </div>
                                                 <div class="tax-select col-lg-6 col-md-6">
                                                     <label>
@@ -132,91 +168,77 @@ Profile &#8226; {{auth()->user()->name}} &#8226; Addresses
 
                                 <hr>
 
-                                <div>
-                                    <address>
-                                        <p>
-                                            <strong> علی شیخ </strong>
-                                            <span class="mr-2"> عنوان آدرس : <span> محل کار </span>
-                                            </span>
-                                        </p>
-                                        <p>
-                                            خ شهید فلان ، کوچه ۸ فلان ،فرعی فلان ، پلاک فلان
-                                            <br>
-                                            <span> استان : تهران </span>
-                                            <span> شهر : تهران </span>
-                                        </p>
-                                        <p>
-                                            کدپستی :
-                                            89561257
-                                        </p>
-                                        <p>
-                                            شماره موبایل :
-                                            89561257
-                                        </p>
-
-                                    </address>
-                                    <a href="#" class="check-btn sqr-btn ">
-                                        <i class="sli sli-pencil"></i> ویرایش آدرس
-                                    </a>
-                                </div>
-
-                                <hr>
-
                                 <button class="collapse-address-create mt-3" type="submit"> ایجاد آدرس
                                     جدید </button>
-                                <div class="collapse-address-create-content">
+                                <div class="collapse-address-create-content"
+                                    style="{{count($errors->addressStore)>0 ? 'display:block;' : ''}}"
+                                >
 
-                                    <form action="#">
-
+                                    <form action="{{route('home.profile.address.store')}}" method="POST">
+                                        @csrf
                                         <div class="row">
 
                                             <div class="tax-select col-lg-6 col-md-6">
                                                 <label>
                                                     عنوان
                                                 </label>
-                                                <input type="text" required="" name="title">
+                                                <input type="text" autocomplete="off" name="title" value="{{old('title')}}">
+                                                @error('title' , 'addressStore')
+                                                    <p class="input-error-validation">
+                                                        <strong>{{$message}}</strong>
+                                                    </p>
+                                                @enderror
                                             </div>
                                             <div class="tax-select col-lg-6 col-md-6">
                                                 <label>
                                                     شماره تماس
                                                 </label>
-                                                <input type="text">
+                                                <input type="text" name="cellphone" autocomplete="off" value="{{old('cellphone')}}">
+                                                @error('cellphone' , 'addressStore')
+                                                    <p class="input-error-validation">
+                                                        <strong>{{$message}}</strong>
+                                                    </p>
+                                                @enderror
                                             </div>
                                             <div class="tax-select col-lg-6 col-md-6">
                                                 <label>
                                                     استان
                                                 </label>
-                                                <select class="email s-email s-wid">
-                                                    <option>Bangladesh</option>
-                                                    <option>Albania</option>
-                                                    <option>Åland Islands</option>
-                                                    <option>Afghanistan</option>
-                                                    <option>Belgium</option>
+                                                <select class="email s-email s-wid province-select" name="province_id">
+                                                    <option>--انتخاب کنید</option>
+                                                    @foreach ($provinces as $province)
+                                                    <option value="{{ $province->id }}">{{ $province->name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                             <div class="tax-select col-lg-6 col-md-6">
                                                 <label>
                                                     شهر
                                                 </label>
-                                                <select class="email s-email s-wid">
-                                                    <option>Bangladesh</option>
-                                                    <option>Albania</option>
-                                                    <option>Åland Islands</option>
-                                                    <option>Afghanistan</option>
-                                                    <option>Belgium</option>
+                                                <select class="email s-email s-wid city-select" name="city_id">
                                                 </select>
                                             </div>
                                             <div class="tax-select col-lg-6 col-md-6">
                                                 <label>
                                                     آدرس
                                                 </label>
-                                                <input type="text">
+                                                <input type="text" name="address" autocomplete="off" value="{{old('postal_code')}}">
+                                                @error('address' , 'addressStore')
+                                                    <p class="input-error-validation">
+                                                        <strong>{{$message}}</strong>
+                                                    </p>
+                                                @enderror
                                             </div>
                                             <div class="tax-select col-lg-6 col-md-6">
                                                 <label>
                                                     کد پستی
                                                 </label>
-                                                <input type="text">
+                                                <input type="text" name="postal_code" autocomplete="off" value="{{old('postal_code')}}">
+                                                @error('postal_code' , 'addressStore')
+                                                    <p class="input-error-validation">
+                                                        <strong>{{$message}}</strong>
+                                                    </p>
+                                                @enderror
                                             </div>
 
                                             <div class=" col-lg-12 col-md-12">
@@ -243,98 +265,4 @@ Profile &#8226; {{auth()->user()->name}} &#8226; Addresses
 </div>
 <!-- my account wrapper end -->
 
-<!-- Modal Order -->
-<div class="modal fade" id="ordersDetiles" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">x</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 col-sm-12 col-xs-12" style="direction: rtl;">
-                        <form action="#">
-                            <div class="table-content table-responsive cart-table-content">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th> تصویر محصول </th>
-                                            <th> نام محصول </th>
-                                            <th> فی </th>
-                                            <th> تعداد </th>
-                                            <th> قیمت کل </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        <tr>
-                                            <td class="product-thumbnail">
-                                                <a href="#"><img src="assets/img/cart/cart-3.svg" alt=""></a>
-                                            </td>
-                                            <td class="product-name"><a href="#"> لورم ایپسوم </a></td>
-                                            <td class="product-price-cart"><span class="amount">
-                                                    20000
-                                                    تومان
-                                                </span></td>
-                                            <td class="product-quantity">
-                                                2
-                                            </td>
-                                            <td class="product-subtotal">
-                                                40000
-                                                تومان
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="product-thumbnail">
-                                                <a href="#"><img src="assets/img/cart/cart-4.svg" alt=""></a>
-                                            </td>
-                                            <td class="product-name"><a href="#"> لورم ایپسوم متن ساختگی </a>
-                                            </td>
-                                            <td class="product-price-cart"><span class="amount">
-                                                    10000
-                                                    تومان
-                                                </span></td>
-                                            <td class="product-quantity">
-                                                3
-                                            </td>
-                                            <td class="product-subtotal">
-                                                30000
-                                                تومان
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td class="product-thumbnail">
-                                                <a href="#"><img src="assets/img/cart/cart-5.svg" alt=""></a>
-                                            </td>
-                                            <td class="product-name"><a href="#"> لورم ایپسوم </a></td>
-                                            <td class="product-price-cart"><span class="amount">
-                                                    40000
-                                                    تومان
-                                                </span></td>
-                                            <td class="product-quantity">
-                                                2
-                                            </td>
-                                            <td class="product-subtotal">
-                                                80000
-                                                تومان
-                                            </td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </form>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal end -->
 @endsection

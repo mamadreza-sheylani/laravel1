@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Home\AddressController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -35,7 +36,7 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 
-Route::prefix('/admin-panel/management')->name('admin.')->group(function(){
+Route::prefix('/admin')->name('admin.')->group(function(){
 
     Route::resource('brands', BrandController::class);
     Route::resource('attributes' , AttributeController::class);
@@ -68,9 +69,12 @@ Route::prefix('/profile')->name('home.')->middleware('auth')->group(function(){
     Route::get('/' , [ProfileController::class , 'index'])->name('profile.index');
     Route::get('/comments' , [HomeCommentController::class , 'comments'])->name('profile.comments');
     Route::get('/orders' , [ProfileController::class , 'orders'])->name('profile.orders');
-    Route::get('/address' , [ProfileController::class , 'address'])->name('profile.address');
+    Route::get('/addresses' , [AddressController::class , 'index'])->name('profile.address');
+    Route::post('/addresses' , [AddressController::class , 'store'])->name('profile.address.store');
     Route::get('/wishlist' , [WishlistController::class , 'index'])->name('profile.wishlist');
 });
+//geting cities list api
+Route::get('/get-province-cities-list' , [AddressController::class , 'getCities']);
 
 //add to wishlist
 Route::get('/addToWishlist/{product:id}' , [WishlistController::class , 'add'])->name('home.add')->middleware('auth');
