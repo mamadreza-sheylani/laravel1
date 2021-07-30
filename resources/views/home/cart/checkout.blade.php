@@ -31,6 +31,10 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
                 $(".city-select").empty();
             }
         });
+
+        $('#address-select').change(function(){
+            $('#address-input').val($(this).val());
+        });
     </script>
 @endsection
 @section('content')
@@ -96,7 +100,7 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
                                     <label> انتخاب آدرس تحویل سفارش <abbr class="required"
                                             title="required">*</abbr></label>
 
-                                    <select class="email s-email s-wid">
+                                    <select class="email s-email s-wid" id="address-select">
                                         <option>--انتخاب کنید</option>
                                         @foreach ($user_addresses as $address)
 
@@ -200,99 +204,103 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
                 </div>
 
                 <div class="col-lg-5">
-                    <div class="your-order-area">
-                        <h3> سفارش شما </h3>
-                        <div class="your-order-wrap gray-bg-4">
-                            <div class="your-order-info-wrap">
-                                <div class="your-order-info">
-                                    <ul>
-                                        <li> محصول <span> جمع </span></li>
-                                    </ul>
-                                </div>
-                                <div class="your-order-middle">
-                                    <ul>
-                                        @foreach ($cart as $item )
+                    <form action="{{route('home.payment')}}" method="post">
+                        @csrf
+                        <div class="your-order-area">
+                            <h3> سفارش شما </h3>
+                            <div class="your-order-wrap gray-bg-4">
+                                <div class="your-order-info-wrap">
+                                    <div class="your-order-info">
+                                        <ul>
+                                            <li> محصول <span> جمع </span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="your-order-middle">
+                                        <ul>
+                                            @foreach ($cart as $item )
 
-                                        <li>
-                                            {{$item->name}}
-                                            -
-                                            {{$item->quantity}}
-                                            <span>
-                                                {{number_format($item->price)}}
-                                                تومان
-                                            </span>
-                                        </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                                <div class="your-order-info order-subtotal">
-                                    <ul>
-                                        <li> مبلغ
-                                            <span>
-                                                {{number_format(\Cart::getTotal())}}
-                                                تومان
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="your-order-info pt-3 pb-2">
-                                    <ul>
-                                        <li>
-                                            مبلغ تخفیف کوپن :
-                                            <span>
-                                                {{number_format(session()->get("coupon.amount"))}}
-                                                تومان
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="your-order-info order-shipping">
-                                    <ul>
-                                        <li> هزینه ارسال
-                                            <span>
-                                                {{number_format(8000)}}
-                                                تومان
-                                            </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="your-order-info order-total">
-                                    <ul>
-                                        <li>جمع کل
-                                            <span>
-                                                {{number_format(cartTotalAmount()+8000)}}
-                                                تومان </span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="payment-method">
-                                <div class="pay-top sin-payment">
-                                    <input id="zarinpal" class="input-radio" type="radio" value="zarinpal"
-                                        checked="checked" name="payment_method">
-                                    <label for="zarinpal"> درگاه پرداخت زرین پال </label>
-                                    <div class="payment-box payment_method_bacs">
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.
-                                        </p>
+                                            <li>
+                                                {{$item->name}}
+                                                -
+                                                {{$item->quantity}}
+                                                <span>
+                                                    {{number_format($item->price)}}
+                                                    تومان
+                                                </span>
+                                            </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                    <div class="your-order-info order-subtotal">
+                                        <ul>
+                                            <li> مبلغ
+                                                <span>
+                                                    {{number_format(\Cart::getTotal())}}
+                                                    تومان
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="your-order-info pt-3 pb-2">
+                                        <ul>
+                                            <li>
+                                                مبلغ تخفیف کوپن :
+                                                <span>
+                                                    {{number_format(session()->get("coupon.amount"))}}
+                                                    تومان
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="your-order-info order-shipping">
+                                        <ul>
+                                            <li> هزینه ارسال
+                                                <span>
+                                                    {{number_format(8000)}}
+                                                    تومان
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="your-order-info order-total">
+                                        <ul>
+                                            <li>جمع کل
+                                                <span>
+                                                    {{number_format(cartTotalAmount()+8000)}}
+                                                    تومان </span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
-                                <div class="pay-top sin-payment">
-                                    <input id="pay" class="input-radio" type="radio" value="pay"
-                                        name="payment_method">
-                                    <label for="pay">درگاه پرداخت پی</label>
-                                    <div class="payment-box payment_method_bacs">
-                                        <p>
-                                            لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.
-                                        </p>
+                                <div class="payment-method">
+                                    <div class="pay-top sin-payment">
+                                        <input id="zarinpal" class="input-radio" type="radio" value="zarinpal"
+                                            checked="checked" name="payment_method">
+                                        <label for="zarinpal"> درگاه پرداخت زرین پال </label>
+                                        <div class="payment-box payment_method_bacs">
+                                            <p>
+                                                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="pay-top sin-payment">
+                                        <input id="pay" class="input-radio" type="radio" value="pay"
+                                            name="payment_method">
+                                        <label for="pay">درگاه پرداخت پی</label>
+                                        <div class="payment-box payment_method_bacs">
+                                            <p>
+                                                لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <div class="Place-order mt-40">
+                                <button type="submit">ثبت سفارش</button>
+                            </div>
                         </div>
-                        <div class="Place-order mt-40">
-                            <button type="submit">ثبت سفارش</button>
-                        </div>
-                    </div>
+                        <input type="hidden" name="address_id" id="address-input">
+                    </form>
                 </div>
 
             </div>

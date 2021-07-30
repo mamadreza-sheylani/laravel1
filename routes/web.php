@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\CartController;
 use App\Http\Controllers\Home\CategoryController as HomeCategoryController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Home\PaymentController;
 use App\Http\Controllers\Home\ProfileController;
 use App\Http\Controllers\Home\WishlistController;
 use Illuminate\Support\Facades\Route;
@@ -109,7 +110,7 @@ Route::get('/remove-coupon' , [CartController::class , 'removeCoupon'])->name('h
 Route::get('/coupons-info/{coupon:id}' , [CartController::class , 'getCouponsInfo']);
 //checkout
 Route::get('/checkout' ,[CartController::class , 'checkout'])->name('home.orders.checkout')->middleware('auth');
-
+Route::post('/payment' , [PaymentController::class , 'payment'])->name('home.payment')->middleware('auth');
 
 Route::get('/test', function () {
     dd(\Cart::getContent());
