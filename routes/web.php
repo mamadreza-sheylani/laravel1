@@ -104,10 +104,11 @@ Route::get('/remove-from-cart/{rowId}',[CartController::class , 'remove'])->name
 Route::put('/cart',[CartController::class , 'update'])->name('home.cart.update');
 Route::get('/clear-cart',[CartController::class , 'clear'])->name('home.cart.clear');
 Route::post('/check-coupon' , [CartController::class , 'checkCoupon'])->name('home.coupons.check');
+Route::get('/remove-coupon' , [CartController::class , 'removeCoupon'])->name('home.coupons.remove');
 //trying to use ajax with jquery
 Route::get('/coupons-info/{coupon:id}' , [CartController::class , 'getCouponsInfo']);
 //checkout
-Route::get('/checkout' ,[CartController::class , 'checkout'])->name('home.orders.checkout');
+Route::get('/checkout' ,[CartController::class , 'checkout'])->name('home.orders.checkout')->middleware('auth');
 
 
 Route::get('/test', function () {

@@ -151,6 +151,7 @@ Cart
                                     تومان
                                 </span>
                             </h5>
+                            <a href="{{route('home.coupons.remove')}}" class="p-1 m-1 bg-light text-danger w-10 h-10" >حذف کوپن</a>
                             @endif
                             <div class="total-shipping">
                                 <h5>
@@ -169,7 +170,7 @@ Cart
                                     تومان
                                 </span>
                             </h4>
-                            <a href="./checkout.html"> ادامه فرآیند خرید </a>
+                            <a href="{{route('home.orders.checkout')}}"> ادامه فرآیند خرید </a>
                         </div>
                     </div>
                 </div>

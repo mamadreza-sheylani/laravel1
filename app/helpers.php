@@ -55,12 +55,12 @@ function checkCoupon($code){
     }
 
     if($coupon->getRawOriginal('type')=="amount"){
-        session()->put('coupon' , ['coupon'=>$coupon->code , 'amount' => $coupon->amount]);
+        session()->put('coupon' , ['coupon'=>$coupon->code , 'name'=>$coupon->name, 'amount' => $coupon->amount]);
 
     }else{
         $total = \Cart::getTotal();
         $amount = (($total*$coupon->precentage)/100) > $coupon->max_precentage_amount ? $coupon->max_precentage_amount: (($total*$coupon->precentage)/100);
-        session()->put('coupon' , ['coupon'=>$coupon->code , 'amount'=>$amount]);
+        session()->put('coupon' , ['coupon'=>$coupon->code , 'name'=>$coupon->name,'amount'=>$amount]);
         return ['success'=>'کوپن برای شما اعمال شد'];
     }
 }

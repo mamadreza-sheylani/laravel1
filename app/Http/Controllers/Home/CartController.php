@@ -15,8 +15,7 @@ class CartController extends Controller
 {
     public function index(){
         $cart = Cart::getContent();
-        return $cart;
-        //return view('home.cart.index' , compact('cart'));
+        return view('home.cart.index' , compact('cart'));
     }
 
 
@@ -108,6 +107,17 @@ class CartController extends Controller
         return redirect()->back();
         //dd($result);
 
+    }
+
+    public function removeCoupon(){
+        if(session()->has('coupon')){
+            session()->forget('coupon');
+            alert()->info('you removed your coupon' , "Allright")->persistent('Ok');
+            return redirect()->back();
+        }else{
+            alert()->info('you dont have a coupon' , "Oops")->persistent('Ok');
+            return redirect()->back();
+        }
     }
 
     public function checkout(){

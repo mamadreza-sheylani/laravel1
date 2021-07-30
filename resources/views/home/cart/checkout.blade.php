@@ -52,19 +52,32 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
 <div class="checkout-main-area pt-70 pb-70 text-right" style="direction: rtl;">
 
     <div class="container">
+        @if (session()->has('coupon'))
+        <div class="bg-gray mb-20 p-2">
+            <h5>
+                کد تخفیف شما :
+                <span class="badge badge-primary p-2">
+                    {{session()->get('coupon.name')}}
+                    <a href="{{route('home.coupons.remove')}}">X</a>
+                </span>
 
+            </h5>
+        </div>
+        @else
         <div class="customer-zone mb-20">
             <p class="cart-page-title">
                 کد تخفیف دارید؟
                 <a class="checkout-click3" href="#"> میتوانید با کلیک در این قسمت کد خود را اعمال کنید </a>
             </p>
             <div class="checkout-login-info3">
-                <form action="#">
-                    <input type="text" placeholder="کد تخفیف">
-                    <input type="submit" value="اعمال کد تخفیف">
+                <form action="{{route('home.coupons.check')}}" method="POST">
+                    <input type="text" name="code" autocomplete="off">
+                    <button class="cart-btn-2" type="submit"> ثبت </button>
                 </form>
             </div>
         </div>
+
+        @endif
 
         <div class="checkout-wrap pt-30">
             <div class="row">
@@ -222,6 +235,17 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
                                         </li>
                                     </ul>
                                 </div>
+                                <div class="your-order-info pt-3 pb-2">
+                                    <ul>
+                                        <li>
+                                            مبلغ تخفیف کوپن :
+                                            <span>
+                                                {{number_format(session()->get("coupon.amount"))}}
+                                                تومان
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
                                 <div class="your-order-info order-shipping">
                                     <ul>
                                         <li> هزینه ارسال
@@ -236,7 +260,7 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
                                     <ul>
                                         <li>جمع کل
                                             <span>
-                                                {{\Cart::getTotal()+8000}}
+                                                {{number_format(cartTotalAmount()+8000)}}
                                                 تومان </span>
                                         </li>
                                     </ul>
