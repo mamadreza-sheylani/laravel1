@@ -105,7 +105,6 @@ class CartController extends Controller
             alert()->success($result['success'] , 'Coupen Submited');
         }
         return redirect()->back();
-        //dd($result);
 
     }
 

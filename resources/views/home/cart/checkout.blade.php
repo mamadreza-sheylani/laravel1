@@ -75,8 +75,9 @@ Profile &#8226; {{auth()->user()->name}} &#8226; checkout
             </p>
             <div class="checkout-login-info3">
                 <form action="{{route('home.coupons.check')}}" method="POST">
+                    @csrf
                     <input type="text" name="code" autocomplete="off">
-                    <button class="cart-btn-2" type="submit"> ثبت </button>
+                    <button type="submit"> ثبت </button>
                 </form>
             </div>
         </div>
