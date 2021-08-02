@@ -52,7 +52,8 @@ class PaymentController extends Controller
             $go = "https://pay.ir/pg/$result->token";
             return redirect()->to($go);
         } else {
-            echo $result->errorMessage;
+            alert()->success($result->errorMessage , 'دقت کن مرد حسابی')->persistent('خا باو');
+            return redirect()->back();
         }
     }
 
@@ -63,13 +64,25 @@ class PaymentController extends Controller
         $result = json_decode($this->verify($api, $token));
         if (isset($result->status)) {
             if ($result->status == 1) {
-                echo "<h1>تراکنش با موفقیت انجام شد</h1>";
+                $updateOrder = $this->updateOrder($token,$result->transId);
+                if (array_key_exists('error', $updateOrder)) {
+                    alert()->error($updateOrder['error'], 'مشکل در آپدیت تراکنش')->persistent('حله');
+                    return redirect()->back();
+                }
+                \Cart::clear();
+                session()->forget('coupon');
+                alert()->success('پرداخت با موفقیت انجام شد . شماره تراکنش : '.$result->transId,'موفق')->persistent('باشه');
+                return redirect()->route('home.index');
             } else {
-                echo "<h1>تراکنش با خطا مواجه شد</h1>";
+                alert()->error('پرداخت با خطا مواجه شد . شماره وضعیت : 0','ناموفق')->persistent('باشه');
+                //alert()->info('لطفا از کسر نشدن موجودی حساب خود اطمینان حاصل کنید و دوباره امتحان کنید.')->persistent('باشه');
+                return redirect()->back();
             }
         } else {
-            if ($_GET['status'] == 0) {
-                echo "<h1>تراکنش با خطا مواجه شد</h1>";
+            if ($request->status == 0) {
+                alert()->error('پرداخت با خطا مواجه شد . شماره وضعیت : 0','ناموفق')->persistent('باشه');
+                //alert()->info('لطفا از کسر نشدن موجودی حساب خود اطمینان حاصل کنید و دوباره امتحان کنید.')->persistent('باشه');
+                return redirect()->back();
             }
         }
     }
@@ -196,5 +209,42 @@ class PaymentController extends Controller
         }
 
         return ['success' => 'success!'];
+    }
+
+    public function updateOrder($token,$refId){
+
+        try {
+            DB::beginTransaction();
+            // transaction update Start
+            $transaction = Transaction::where('token',$token)->firstOrFail();
+            $transaction->update([
+                'status'=> 1,
+                'ref_id' => $refId
+            ]);
+            //transaction update End
+
+            //order update Start
+            $order = Order::find($transaction->order_id);
+            $order->update([
+                'status' => 1,
+                'payment_status' => 1
+            ]);
+            //order update End
+
+            //subtracting from store stock Start
+            foreach(\Cart::getContent() as $item){
+                $variation = ProductVariation::find($item->attributes->id);
+                $variation->update([
+                    'quantity' => $variation->quantity - $item->quantity
+                ]);
+            }
+            //subtracting from store stock End
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            return ['error' => $ex->getMessage()];
+        }
+
+        return ['success'=>'success'];
     }
 }
