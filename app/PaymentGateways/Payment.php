@@ -5,6 +5,7 @@ namespace App\PaymentGateWays;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ProductVariation;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 

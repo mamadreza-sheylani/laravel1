@@ -114,34 +114,44 @@ class PaymentController extends Controller
         //         return redirect()->route('home.index');
         //     }
         // }
-        $MerchantID = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+        // $MerchantID = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
 
-        $data = array('MerchantID' => $MerchantID, 'Authority' => $request->Authority, 'Amount' => 10000);
-        $jsonData = json_encode($data);
-        //change the url before the depolyment
-        $ch = curl_init('https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json');
-        curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($jsonData)
-        ));
-        $result = curl_exec($ch);
-        $err = curl_error($ch);
-        curl_close($ch);
-        $result = json_decode($result, true);
+        // $data = array('MerchantID' => $MerchantID, 'Authority' => $request->Authority, 'Amount' => 10000);
+        // $jsonData = json_encode($data);
+        // //change the url before the depolyment
+        // $ch = curl_init('https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json');
+        // curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+        // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        //     'Content-Type: application/json',
+        //     'Content-Length: ' . strlen($jsonData)
+        // ));
+        // $result = curl_exec($ch);
+        // $err = curl_error($ch);
+        // curl_close($ch);
+        // $result = json_decode($result, true);
 
-        if ($err) {
-            echo "cURL Error #:" . $err;
+        // if ($err) {
+        //     echo "cURL Error #:" . $err;
+        // } else {
+        //     if ($result['Status'] == 100) {
+        //         echo 'Transation success. RefID:' . $result['RefID'];
+        //     } else {
+        //         echo 'Transation failed. Status:' . $result['Status'];
+        //     }
+        // }
+        $payGateway = new Pay();
+        $payGatewayResult = $payGateway->verify($request->token, $request->status);
+
+        if (array_key_exists('error', $payGatewayResult)) {
+            alert()->error($payGatewayResult['error'], 'دقت کنید')->persistent('حله');
+            return redirect()->back();
         } else {
-            if ($result['Status'] == 100) {
-                echo 'Transation success. RefID:' . $result['RefID'];
-            } else {
-                echo 'Transation failed. Status:' . $result['Status'];
-            }
+            alert()->success($payGatewayResult['success'], 'با تشکر');
+            return redirect()->route('home.index');
         }
     }
 
