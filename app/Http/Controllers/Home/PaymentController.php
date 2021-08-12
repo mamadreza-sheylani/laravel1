@@ -28,14 +28,16 @@ class PaymentController extends Controller
 
         $checkCart = $this->checkCart();
         if (array_key_exists('error', $checkCart)) {
-            alert()->error($checkCart['error'], 'level2');
-            return redirect()->back();
+            alert()->error($checkCart['error'], 'دقت کنید');
+            return redirect()->route('home.index');
         }
+
         $amounts = $this->getAmounts();
         if (array_key_exists('error', $amounts)) {
-            alert()->error($amounts['error'], 'level1');
-            return redirect()->back();
+            alert()->error($amounts['error'], 'دقت کنید');
+            return redirect()->route('home.index');
         }
+
         $api = 'test';
         $amount = $amounts['paying_amount'];
         $redirect = route('home.payment_verify');
@@ -43,7 +45,7 @@ class PaymentController extends Controller
         $result = json_decode($result);
         if ($result->status) {
 
-            $createOrder = $this->createOrder($request->address_id , $amounts , $result->token , 'pay');
+            $createOrder = $this->createOrder($request->address_id, $amounts, $result->token, 'pay');
             if (array_key_exists('error', $createOrder)) {
                 alert()->error($createOrder['error'], 'دقت کنید')->persistent('حله');
                 return redirect()->back();
@@ -52,7 +54,7 @@ class PaymentController extends Controller
             $go = "https://pay.ir/pg/$result->token";
             return redirect()->to($go);
         } else {
-            alert()->success($result->errorMessage , 'دقت کن مرد حسابی')->persistent('خا باو');
+            alert()->error($result->errorMessage, 'دقت کنید')->persistent('حله');
             return redirect()->back();
         }
     }
@@ -64,25 +66,23 @@ class PaymentController extends Controller
         $result = json_decode($this->verify($api, $token));
         if (isset($result->status)) {
             if ($result->status == 1) {
-                $updateOrder = $this->updateOrder($token,$result->transId);
+                $updateOrder = $this->updateOrder($token, $result->transId);
                 if (array_key_exists('error', $updateOrder)) {
-                    alert()->error($updateOrder['error'], 'مشکل در آپدیت تراکنش')->persistent('حله');
+                    alert()->error($updateOrder['error'], 'دقت کنید')->persistent('حله');
                     return redirect()->back();
                 }
                 \Cart::clear();
-                session()->forget('coupon');
-                alert()->success('پرداخت با موفقیت انجام شد . شماره تراکنش : '.$result->transId,'موفق')->persistent('باشه');
+                alert()->success(' پرداخت با موفقیت انجام شد.شماره تراکنش'.$result->transId, 'باتشکر')->persistent('حله');
                 return redirect()->route('home.index');
+
             } else {
-                alert()->error('پرداخت با خطا مواجه شد . شماره وضعیت : 0','ناموفق')->persistent('باشه');
-                //alert()->info('لطفا از کسر نشدن موجودی حساب خود اطمینان حاصل کنید و دوباره امتحان کنید.')->persistent('باشه');
-                return redirect()->back();
+                alert()->error('پرداخت با خطا مواجه شد.شماره وضعیت'.$result->status, 'باتشکر');
+                return redirect()->route('home.index');
             }
         } else {
             if ($request->status == 0) {
-                alert()->error('پرداخت با خطا مواجه شد . شماره وضعیت : 0','ناموفق')->persistent('باشه');
-                //alert()->info('لطفا از کسر نشدن موجودی حساب خود اطمینان حاصل کنید و دوباره امتحان کنید.')->persistent('باشه');
-                return redirect()->back();
+                alert()->error('پرداخت با خطا مواجه شد.شماره وضعیت'.$request->status, 'باتشکر');
+                return redirect()->route('home.index');
             }
         }
     }
@@ -166,7 +166,7 @@ class PaymentController extends Controller
         ];
     }
 
-    public function createOrder($addressId , $amounts , $token , $gateway_name)
+    public function createOrder($addressId, $amounts, $token, $gateway_name)
     {
         try {
             DB::beginTransaction();
@@ -182,8 +182,7 @@ class PaymentController extends Controller
                 'payment_type' => 'online',
             ]);
 
-            foreach(\Cart::getContent() as $item)
-            {
+            foreach (\Cart::getContent() as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->associatedModel->id,
@@ -211,40 +210,37 @@ class PaymentController extends Controller
         return ['success' => 'success!'];
     }
 
-    public function updateOrder($token,$refId){
-
+    public function updateOrder($token, $refId)
+    {
         try {
             DB::beginTransaction();
-            // transaction update Start
-            $transaction = Transaction::where('token',$token)->firstOrFail();
+
+            $transaction = Transaction::where('token', $token)->firstOrFail();
+
             $transaction->update([
-                'status'=> 1,
+                'status' => 1,
                 'ref_id' => $refId
             ]);
-            //transaction update End
 
-            //order update Start
-            $order = Order::find($transaction->order_id);
+            $order = Order::findOrFail($transaction->order_id);
             $order->update([
-                'status' => 1,
-                'payment_status' => 1
+                'payment_status' => 1,
+                'status' => 1
             ]);
-            //order update End
 
-            //subtracting from store stock Start
-            foreach(\Cart::getContent() as $item){
+            foreach (\Cart::getContent() as $item) {
                 $variation = ProductVariation::find($item->attributes->id);
                 $variation->update([
                     'quantity' => $variation->quantity - $item->quantity
                 ]);
             }
-            //subtracting from store stock End
+
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
             return ['error' => $ex->getMessage()];
         }
 
-        return ['success'=>'success'];
+        return ['success' => 'success!'];
     }
 }
