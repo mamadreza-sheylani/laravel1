@@ -10,12 +10,50 @@ use App\Models\ProductVariation;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use App\PaymentGateWays\Pay;
 use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
     public function payment(Request $request)
     {
+        // $data = array(
+        //     'MerchantID' => 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+        //     'Amount' => 10000,
+        //     'CallbackURL' => route('home.payment_verify'),
+        //     'Description' => 'خرید تست'
+        // );
+
+
+        // $jsonData = json_encode($data);
+        // $ch = curl_init('https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json');
+        // curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+        // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        //     'Content-Type: application/json',
+        //     'Content-Length: ' . strlen($jsonData)
+        // ));
+
+
+        // $result = curl_exec($ch);
+        // $err = curl_error($ch);
+        // $result = json_decode($result, true);
+        // curl_close($ch);
+
+
+        // if ($err) {
+        //     echo "cURL Error #:" . $err;
+        // } else {
+        //     if ($result["Status"] == 100) {
+        //         //change sandbox to www after account registeration
+        //         return redirect()->to('https://sandbox.zarinpal.com/pg/StartPay/'.$result['Authority']);
+        //     } else {
+        //         echo 'ERR: ' . $result["Status"];
+        //     }
+        // }
         $validator = Validator::make($request->all(), [
             'address_id' => 'required',
             'payment_method' => 'required',
@@ -28,101 +66,87 @@ class PaymentController extends Controller
 
         $checkCart = $this->checkCart();
         if (array_key_exists('error', $checkCart)) {
-            alert()->error($checkCart['error'], 'دقت کنید');
-            return redirect()->route('home.index');
+            alert()->error($checkCart['error'], 'دقت کنید')->persistent();
+            return redirect()->route('home.orders.checkout');
         }
 
         $amounts = $this->getAmounts();
         if (array_key_exists('error', $amounts)) {
-            alert()->error($amounts['error'], 'دقت کنید');
-            return redirect()->route('home.index');
+            alert()->error($amounts['error'], 'دقت کنید')->persistent();
+            return redirect()->route('home.orders.checkout');
         }
 
-        $api = 'test';
-        $amount = $amounts['paying_amount'];
-        $redirect = route('home.payment_verify');
-        $result = $this->send($api, $amount, $redirect);
-        $result = json_decode($result);
-        if ($result->status) {
-
-            $createOrder = $this->createOrder($request->address_id, $amounts, $result->token, 'pay');
-            if (array_key_exists('error', $createOrder)) {
-                alert()->error($createOrder['error'], 'دقت کنید')->persistent('حله');
-                return redirect()->back();
-            }
-
-            $go = "https://pay.ir/pg/$result->token";
-            return redirect()->to($go);
-        } else {
-            alert()->error($result->errorMessage, 'دقت کنید')->persistent('حله');
+        $payGateway = new Pay();
+        $payGatewayResult = $payGateway->send($amounts,$request->address_id);
+        if (array_key_exists('error', $payGatewayResult)) {
+            alert()->error($payGatewayResult['error'], 'دقت کنید')->persistent();
             return redirect()->back();
+        }else{
+            return redirect()->to($payGatewayResult['success']);
         }
+
+
     }
 
     public function paymentVerify(Request $request)
     {
-        $api = 'test';
-        $token = $request->token;
-        $result = json_decode($this->verify($api, $token));
-        if (isset($result->status)) {
-            if ($result->status == 1) {
-                $updateOrder = $this->updateOrder($token, $result->transId);
-                if (array_key_exists('error', $updateOrder)) {
-                    alert()->error($updateOrder['error'], 'دقت کنید')->persistent('حله');
-                    return redirect()->back();
-                }
-                \Cart::clear();
-                alert()->success(' پرداخت با موفقیت انجام شد.شماره تراکنش'.$result->transId, 'باتشکر')->persistent('حله');
-                return redirect()->route('home.index');
+        // $api = 'test';
+        // $token = $request->token;
+        // $result = json_decode($this->verify($api, $token));
+        // if (isset($result->status)) {
+        //     if ($result->status == 1) {
+        //         $updateOrder = $this->updateOrder($token, $result->transId);
+        //         if (array_key_exists('error', $updateOrder)) {
+        //             alert()->error($updateOrder['error'], 'دقت کنید')->persistent('حله');
+        //             return redirect()->back();
+        //         }
+        //         \Cart::clear();
+        //         alert()->success(' پرداخت با موفقیت انجام شد.شماره تراکنش'.$result->transId, 'باتشکر')->persistent('حله');
+        //         return redirect()->route('home.index');
 
-            } else {
-                alert()->error('پرداخت با خطا مواجه شد.شماره وضعیت'.$result->status, 'باتشکر');
-                return redirect()->route('home.index');
-            }
+        //     } else {
+        //         alert()->error('پرداخت با خطا مواجه شد.شماره وضعیت'.$result->status, 'باتشکر');
+        //         return redirect()->route('home.index');
+        //     }
+        // } else {
+        //     if ($request->status == 0) {
+        //         alert()->error('پرداخت با خطا مواجه شد.شماره وضعیت'.$request->status, 'باتشکر');
+        //         return redirect()->route('home.index');
+        //     }
+        // }
+        $MerchantID = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+
+        $data = array('MerchantID' => $MerchantID, 'Authority' => $request->Authority, 'Amount' => 10000);
+        $jsonData = json_encode($data);
+        //change the url before the depolyment
+        $ch = curl_init('https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'ZarinPal Rest Api v1');
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen($jsonData)
+        ));
+        $result = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+        $result = json_decode($result, true);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
         } else {
-            if ($request->status == 0) {
-                alert()->error('پرداخت با خطا مواجه شد.شماره وضعیت'.$request->status, 'باتشکر');
-                return redirect()->route('home.index');
+            if ($result['Status'] == 100) {
+                echo 'Transation success. RefID:' . $result['RefID'];
+            } else {
+                echo 'Transation failed. Status:' . $result['Status'];
             }
         }
     }
 
-    public function send($api, $amount, $redirect, $mobile = null, $factorNumber = null, $description = null)
-    {
-        return $this->curl_post('https://pay.ir/pg/send', [
-            'api'          => $api,
-            'amount'       => $amount,
-            'redirect'     => $redirect,
-            'mobile'       => $mobile,
-            'factorNumber' => $factorNumber,
-            'description'  => $description,
-        ]);
-    }
 
-    public function curl_post($url, $params)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-        ]);
-        $res = curl_exec($ch);
-        curl_close($ch);
 
-        return $res;
-    }
-
-    public function verify($api, $token)
-    {
-        return $this->curl_post('https://pay.ir/pg/verify', [
-            'api'     => $api,
-            'token' => $token,
-        ]);
-    }
 
     public function checkCart()
     {
@@ -166,81 +190,4 @@ class PaymentController extends Controller
         ];
     }
 
-    public function createOrder($addressId, $amounts, $token, $gateway_name)
-    {
-        try {
-            DB::beginTransaction();
-
-            $order = Order::create([
-                'user_id' => auth()->id(),
-                'address_id' => $addressId,
-                'coupon_id' => session()->has('coupon') ? session()->get('coupon.id') : null,
-                'total_amount' => $amounts['total_amount'],
-                'delivery_amount' => $amounts['delivery_amount'],
-                'coupon_amount' => $amounts['coupon_amount'],
-                'paying_amount' => $amounts['paying_amount'],
-                'payment_type' => 'online',
-            ]);
-
-            foreach (\Cart::getContent() as $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $item->associatedModel->id,
-                    'product_variation_id' => $item->attributes->id,
-                    'price' => $item->price,
-                    'quantity' => $item->quantity,
-                    'subtotal' => ($item->quantity * $item->price)
-                ]);
-            }
-
-            Transaction::create([
-                'user_id' => auth()->id(),
-                'order_id' => $order->id,
-                'amount' => $amounts['paying_amount'],
-                'token' => $token,
-                'gateway_name' => $gateway_name
-            ]);
-
-            DB::commit();
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return ['error' => $ex->getMessage()];
-        }
-
-        return ['success' => 'success!'];
-    }
-
-    public function updateOrder($token, $refId)
-    {
-        try {
-            DB::beginTransaction();
-
-            $transaction = Transaction::where('token', $token)->firstOrFail();
-
-            $transaction->update([
-                'status' => 1,
-                'ref_id' => $refId
-            ]);
-
-            $order = Order::findOrFail($transaction->order_id);
-            $order->update([
-                'payment_status' => 1,
-                'status' => 1
-            ]);
-
-            foreach (\Cart::getContent() as $item) {
-                $variation = ProductVariation::find($item->attributes->id);
-                $variation->update([
-                    'quantity' => $variation->quantity - $item->quantity
-                ]);
-            }
-
-            DB::commit();
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            return ['error' => $ex->getMessage()];
-        }
-
-        return ['success' => 'success!'];
-    }
 }
