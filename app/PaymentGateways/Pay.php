@@ -16,7 +16,6 @@ class Pay extends Payment
             if (array_key_exists('error', $createOrder)) {
                 return $createOrder;
             }
-            // dd('csdcsd');
             $go = "https://pay.ir/pg/$result->token";
             return ['success' => $go];
         } else {
