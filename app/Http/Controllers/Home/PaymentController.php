@@ -70,7 +70,7 @@ class PaymentController extends Controller
 
     }
 
-    public function paymentVerify(Request $request)
+    public function paymentVerify(Request $request , $gatewayName)
     {
         //requirement for zarinpal
         $amounts = $this->getAmounts();
@@ -78,8 +78,7 @@ class PaymentController extends Controller
             alert()->error($amounts['error'], 'دقت کنید')->persistent();
             return redirect()->route('home.orders.checkout');
         }
-
-        if($request->payment_method == 'pay'){
+        if($gatewayName == 'pay'){
 
             $payGateway = new Pay();
             $payGatewayResult = $payGateway->verify($request->token, $request->status);
@@ -91,10 +90,10 @@ class PaymentController extends Controller
                 alert()->success($payGatewayResult['success'], 'با تشکر');
                 return redirect()->route('home.index');
             }
-        }else if($request->payment_method == 'zarinpal'){
+        }else if($gatewayName == 'zarinpal'){
 
             $zarinpalGateway = new Zarinpal();
-            $zarinpalGatewayResult = $zarinpalGateway->verify($request->Authority , $amounts['paying_amount']);
+            $zarinpalGatewayResult = $zarinpalGateway->verify($request->Authority, $amounts['paying_amount']);
             if (array_key_exists('error', $zarinpalGatewayResult)) {
                 alert()->error($zarinpalGatewayResult['error'], 'دقت کنید')->persistent('حله');
                 return redirect()->back();
@@ -103,6 +102,9 @@ class PaymentController extends Controller
                 return redirect()->route('home.index');
             }
 
+        }else{
+            alert()->error('dont do bad things','Problem in Payment Gateway')->persistent();
+            return redirect()->back();
         }
     }
 

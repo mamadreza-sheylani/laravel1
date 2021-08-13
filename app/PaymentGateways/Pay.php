@@ -7,7 +7,7 @@ class Pay extends Payment
     {
         $api = 'test';
         $amount = $amounts['paying_amount'] . '0';
-        $redirect = route('home.payment_verify');
+        $redirect = route('home.payment_verify' , ['gatewayName'=>'pay']);
         $result = $this->sendRequest($api, $amount, $redirect);
         $result = json_decode($result);
         if ($result->status) {

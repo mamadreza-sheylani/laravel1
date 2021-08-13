@@ -111,7 +111,7 @@ Route::get('/coupons-info/{coupon:id}' , [CartController::class , 'getCouponsInf
 //checkout
 Route::get('/checkout' ,[CartController::class , 'checkout'])->name('home.orders.checkout')->middleware('auth');
 Route::post('/payment' , [PaymentController::class , 'payment'])->name('home.payment')->middleware('auth');
-Route::get('/payment-verify', [PaymentController::class, 'paymentVerify'])->name('home.payment_verify');
+Route::get('/payment-verify/{gatewayName}', [PaymentController::class, 'paymentVerify'])->name('home.payment_verify');
 
 Route::get('/test', function () {
     dd(\Cart::getContent());
