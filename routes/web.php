@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Home\CommentController as HomeCommentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Home\ProductController as HomeProductController ;
@@ -46,6 +47,7 @@ Route::prefix('/admin')->name('admin.')->group(function(){
     Route::resource('products' , ProductController::class);
     Route::resource('comments' , CommentController::class);
     Route::resource('coupons' , CouponController::class);
+    Route::resource('orders' , OrderController::class);
 
     //get Category Attribute for product@create from category controller
     Route::get('/category-attributes/{category}' , [CategoryController::class , 'getCategoryAttributes']);
