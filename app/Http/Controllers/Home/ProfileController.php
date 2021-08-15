@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -13,7 +15,8 @@ class ProfileController extends Controller
     }
 
     public function orders(){
-        return view('home.profile.orders');
+        $user_orders = Order::where('user_id',auth()->user()->id)->get();
+        return view('home.profile.orders',compact('user_orders'));
     }
 
     public function address(){
