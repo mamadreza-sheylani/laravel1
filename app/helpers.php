@@ -31,7 +31,7 @@ function convertShamsiToGregorianDate($date)
     return implode("-", $arrayGergorianDate) . " " . $shamsiDateSplit[3];
 }
 
-function convertEnglishToPersianDate($date)
+function convertEnglishToPersianDate($date,$wantHour=true)
 {
     if($date == null){
         return null;
@@ -40,8 +40,11 @@ function convertEnglishToPersianDate($date)
     $englishDateSplit = preg_split($pattern, $date);
 
     $arrayPersianDate = verta()->getJalali($englishDateSplit[0], $englishDateSplit[1], $englishDateSplit[2]);
-
-    return $englishDateSplit[3]." ".implode("-", $arrayPersianDate);
+    if ($wantHour==true) {
+        return $englishDateSplit[3]." ".implode("-", $arrayPersianDate);
+    }else{
+        return implode('/',$arrayPersianDate);
+    }
 }
 
 function cartTotalSaleAmount()
