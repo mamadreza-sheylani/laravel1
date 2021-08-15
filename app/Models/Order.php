@@ -12,6 +12,10 @@ class Order extends Model
     protected $table = "orders";
     protected $guarded = [];
 
+    public function getStatusCheckAttribute($status){
+        return $status?'پرداخت شده':'در انتظار پرداخت';
+    }
+
     public function orderItems(){
         return $this->hasMany(OrderItem::class);
     }
@@ -22,5 +26,9 @@ class Order extends Model
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+
+    public function coupon(){
+        return $this->belongsTo(Coupon::class);
     }
 }
