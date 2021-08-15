@@ -427,7 +427,7 @@
                                 <div class="pro-details-meta">
                                     <span>دسته بندی :</span>
                                     <ul>
-                                        <li><a href="#">{{$product->category->parent->name}} , {{$product->category->name}}</a></li>
+                                        <li><a href="#">{{1}} , {{1}}</a></li>
                                     </ul>
                                 </div>
                                 <div class="pro-details-meta">
