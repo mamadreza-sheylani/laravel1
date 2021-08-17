@@ -34,7 +34,7 @@ Profile &#8226; {{auth()->user()->name}} &#8226; Orders
                         <div class="col-lg-9 col-md-8">
                             <div class="myaccount-content">
                                 <h3>سفارشات</h3>
-                                @if (empty($user_orders))
+                                @if ($user_orders->isEmpty())
                                     <div class="alert alert-info">
                                         شما خریدی ندارید.
                                     </div>

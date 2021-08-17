@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Home\ProductController as HomeProductController ;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TransactionContoller;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\CartController;
 use App\Http\Controllers\Home\CategoryController as HomeCategoryController;
@@ -48,6 +49,7 @@ Route::prefix('/admin')->name('admin.')->group(function(){
     Route::resource('comments' , CommentController::class);
     Route::resource('coupons' , CouponController::class);
     Route::resource('orders' , OrderController::class);
+    Route::resource('transactions' , TransactionContoller::class);
 
     //get Category Attribute for product@create from category controller
     Route::get('/category-attributes/{category}' , [CategoryController::class , 'getCategoryAttributes']);
