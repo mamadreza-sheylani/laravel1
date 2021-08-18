@@ -117,6 +117,6 @@ Route::get('/checkout' ,[CartController::class , 'checkout'])->name('home.orders
 Route::post('/payment' , [PaymentController::class , 'payment'])->name('home.payment')->middleware('auth');
 Route::get('/payment-verify/{gatewayName}', [PaymentController::class, 'paymentVerify'])->name('home.payment_verify');
 
-Route::get('/test', function () {
-    dd(\Cart::getContent());
-});
+Route::get('/about-us' , [HomeController::class , 'aboutUs'])->name('home.about_us');
+Route::get('/contact-us' , [HomeController::class , 'contactUs'])->name('home.contact_us');
+Route::post('/contact-us' , [HomeController::class , 'contactUsSend'])->name('home.contact_us.send');

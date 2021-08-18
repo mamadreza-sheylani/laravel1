@@ -5,7 +5,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Dario - club</div>
+        <div class="sidebar-brand-text mx-3">MyShop</div>
     </a>
 
     <!-- Divider -->
@@ -29,7 +29,7 @@
 
     <li class="nav-item active">
         <a class="nav-link" href="{{route('admin.banners.index')}}">
-            <i class="fas fa-fw fa-image"></i>
+            <i class="fas fa-image"></i>
             <span> بنر ها </span></a>
     </li>
 
@@ -41,12 +41,12 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct"
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct1"
             aria-expanded="true" aria-controls="collapseProduct">
             <i class="fas fa-fw fa-cart-plus"></i>
             <span>محصولات</span>
         </a>
-        <div id="collapseProduct" class="collapse" aria-labelledby="headingUtilities"
+        <div id="collapseProduct1" class="collapse" aria-labelledby="headingUtilities"
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <a class="collapse-item" href="{{route('admin.products.index')}}">محصولات</a>
@@ -54,6 +54,26 @@
                 <a class="collapse-item" href="{{route('admin.tags.index')}}">تگ ها</a>
                 <a class="collapse-item" href="{{route('admin.attributes.index')}}">ویژگی ها</a>
                 <a class="collapse-item" href="{{route('admin.comments.index')}}">کامنت ها</a>
+            </div>
+            {{-- <div class="bg-white py-2 collapse-inner rounded">
+            </div>
+            <div class="bg-white py-2 collapse-inner rounded">
+            </div> --}}
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct2"
+            aria-expanded="true" aria-controls="collapseProduct">
+            <i class="fas fa-fw fa-cart-plus"></i>
+            <span>سفارشات</span>
+        </a>
+        <div id="collapseProduct2" class="collapse" aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{route('admin.orders.index')}}">سفارشات</a>
+                <a class="collapse-item" href="{{route('admin.transactions.index')}}">تراکنش ها</a>
+                <a class="collapse-item" href="{{route('admin.coupons.index')}}">کوپن ها</a>
             </div>
             {{-- <div class="bg-white py-2 collapse-inner rounded">
             </div>

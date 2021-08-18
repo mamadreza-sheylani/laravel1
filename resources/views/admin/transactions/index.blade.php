@@ -8,7 +8,7 @@
                 <h5 class="font-weight-bold">لیست تراکنش ها({{$transactions->total()}})</h5>
 
             </div>
-            <table class="table table-btransactioned table-striped text-center">
+            <table class="table table-bordered table-striped text-center">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -18,6 +18,7 @@
                         <th>قیمت</th>
                         <th>درگاه پرداخت</th>
                         <th>وضعیت</th>
+                        {{-- <th>عملیات</th> --}}
                     </tr>
                 </thead>
                 <tbody>

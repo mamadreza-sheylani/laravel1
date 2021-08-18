@@ -16,7 +16,8 @@ class TransactionContoller extends Controller
     public function index()
     {
         $transactions = Transaction::latest()->paginate(20);
-        return view('admin.transactions.index',compact('transactions'));
+        //return view('admin.transactions.index',compact('transactions'));
+        return $transactions;
     }
 
     /**
