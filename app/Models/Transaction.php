@@ -16,8 +16,13 @@ class Transaction extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getStatusCheckAttribute($status){
-        return $status?'پرداخت شده':'در انتظار پرداخت';
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function getStatusAttribute($status){
+        return $status ? "موفق" : "ناموفق";
     }
 
     public function getGatewayNameAttribute($gateway_name){
