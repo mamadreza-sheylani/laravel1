@@ -287,6 +287,10 @@ require('axios');
         $('.quickview-slide-active a').removeClass('active');
     })
 
+    // for loader
+    $(window).on('load', function() {
+        $('.lds-ellipsis').hide();
+    });
 
     /*----------------------------
         Cart Plus Minus Button

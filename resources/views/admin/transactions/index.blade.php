@@ -33,7 +33,7 @@
                                 {{$transaction->status_check}}
                             </th>
                             <th>
-                                {{number_format($transaction->paying_amount)}}
+                                {{number_format($transaction->amount)}}
                             </th>
                             <th style="color:{{$transaction->gateway_name['color']}};">
                                 {{$transaction->gateway_name['name']}}

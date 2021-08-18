@@ -21,6 +21,7 @@
 
     {{-- @yield('content') --}}
     <div class="wrapper">
+        @include('home.sections.loader')
 
         @include('home.sections.header')
 

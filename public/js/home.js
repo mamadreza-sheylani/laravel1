@@ -20633,6 +20633,10 @@ __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
   });
   $('.quickview-slide-active a').on('click', function () {
     $('.quickview-slide-active a').removeClass('active');
+  }); // for loader
+
+  $(window).on('load', function () {
+    $('.lds-ellipsis').hide();
   });
   /*----------------------------
       Cart Plus Minus Button

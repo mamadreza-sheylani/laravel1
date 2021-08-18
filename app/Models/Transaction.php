@@ -23,13 +23,13 @@ class Transaction extends Model
     public function getGatewayNameAttribute($gateway_name){
         switch ($gateway_name) {
             case 'zarinpal':
-                $gateway_name = ['color'=>'yellow',"name"=>"زرین پال"];
+                $gateway_name = ['color'=>'#ffd400',"name"=>"زرین پال"];
                 break;
             case 'pay':
                 $gateway_name = ['color'=>'blue',"name"=>"پی"];
                 break;
             default:
-                $gateway_name = ['color'=>'green',"name"=>"nothing"];
+                $gateway_name = ['color'=>'red',"name"=>"N/A"];
                 break;
         }
         return $gateway_name;
