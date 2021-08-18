@@ -21,7 +21,7 @@
 
 
             //remember to change the Domain name when diploying on a server
-            $.get(`{{url('/admin-panel/management/category-attributes/${categoryId}')}}`,function (response , status) {
+            $.get(`{{url('/admin/category-attributes/${categoryId}')}}`,function (response , status) {
 
                 if(status == 'success'){
 

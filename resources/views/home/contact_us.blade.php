@@ -1,16 +1,5 @@
 @extends('home.home')
 @section('title' , "contact us")
-@section('script')
-<script>
-    // const axios = require('axios');
-    // $('#contact-form').submit(function (e) {
-    //     e.preventDefault();
-
-    // });
-    axios.get("http://127.0.0.1:8000/admin/transactions")
-    .then((res)=>{console.log(res);}).catch((err)=>{console.log(err);})
-</script>
-@endsection
 @section('content')
 <div class="breadcrumb-area pt-35 pb-35 bg-gray" style="direction: rtl;">
     <div class="container">
@@ -66,10 +55,10 @@
                 <div class="contact-from contact-shadow">
                     <form id="contact-form" action="{{route('home.contact_us.send')}}" method="post">
                         @csrf
-                        <input name="name" type="text" placeholder="نام شما" autocomplete="off">
-                        <input name="email" type="email" placeholder="ایمیل شما" autocomplete="off">
-                        <input name="subject" type="text" placeholder="موضوع پیام" autocomplete="off">
-                        <textarea name="text" placeholder="متن پیام"></textarea>
+                        <input name="name" type="text" placeholder="نام شما" autocomplete="off" required>
+                        <input name="email" type="email" placeholder="ایمیل شما" autocomplete="off" required>
+                        <input name="subject" type="text" placeholder="موضوع پیام" autocomplete="off" required>
+                        <textarea name="text" placeholder="متن پیام" required></textarea>
                         <button class="submit" type="submit"> ارسال پیام </button>
                     </form>
                     <p class="form-messege"></p>
