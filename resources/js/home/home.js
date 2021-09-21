@@ -1,7 +1,4 @@
 require('bootstrap/dist/js/bootstrap.bundle');
-require('sweetalert');
-require('axios');
-
 
 (function($) {
     "use strict";
@@ -817,6 +814,6 @@ require('axios');
     formatNumber(document.body)
 
 })(jQuery);
-
+require('sweetalert');
 require('./files/rating.js');
 require('./files/jquery.nice-select.js')

@@ -146,7 +146,7 @@
                                     </div>
                                     <div class="pro-details-quality">
                                         <div class="cart-plus-minus">
-                                            <input class="cart-plus-minus-box quantity-input" type="text" name="qtybutton" value="1" data-max='' />
+                                            <input class="cart-plus-minus-box quantity-input" type="text" name="qtybutton" value="1" data-max='5' />
                                             <input type="hidden" name="product_id" value="{{$product->id}}">
                                         </div>
                                         <div class="pro-details-cart">
