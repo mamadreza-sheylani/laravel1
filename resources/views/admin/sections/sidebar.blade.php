@@ -13,7 +13,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="{{route('dashboard')}}">
+        <a class="nav-link" href="{{route('admin.dashboard')}}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span> داشبورد </span></a>
     </li>
@@ -41,6 +41,23 @@
     </li>
 
     <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct3"
+            aria-expanded="true" aria-controls="collapseProduct">
+            <i class="fas fa-fw fa-cart-plus"></i>
+            <span>کاربران</span>
+        </a>
+        <div id="collapseProduct3" class="collapse {{request()->is("admin/users*") ? "show" : ''}}" aria-labelledby="headingUtilities"
+            data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a href="#" class="collapse-item"> some item</a>
+                <a href="#" class="collapse-item"> some item</a>
+                <a href="#" class="collapse-item"> some item</a>
+                <a href="#" class="collapse-item"> some item</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProduct1"
             aria-expanded="true" aria-controls="collapseProduct">
             <i class="fas fa-fw fa-cart-plus"></i>
@@ -55,10 +72,6 @@
                 <a class="collapse-item" href="{{route('admin.attributes.index')}}">ویژگی ها</a>
                 <a class="collapse-item" href="{{route('admin.comments.index')}}">کامنت ها</a>
             </div>
-            {{-- <div class="bg-white py-2 collapse-inner rounded">
-            </div>
-            <div class="bg-white py-2 collapse-inner rounded">
-            </div> --}}
         </div>
     </li>
 
@@ -75,10 +88,6 @@
                 <a class="collapse-item" href="{{route('admin.transactions.index')}}">تراکنش ها</a>
                 <a class="collapse-item" href="{{route('admin.coupons.index')}}">کوپن ها</a>
             </div>
-            {{-- <div class="bg-white py-2 collapse-inner rounded">
-            </div>
-            <div class="bg-white py-2 collapse-inner rounded">
-            </div> --}}
         </div>
     </li>
 

@@ -1,6 +1,7 @@
 @extends('admin.admin')
 
 @section('script')
+    {{-- this one works --}}
     <script>
         // Set new default font family and font color to mimic Bootstrap's default styling
         Chart.defaults.global.defaultFontFamily = 'Nunito',
@@ -31,15 +32,15 @@
             }
             return s.join(dec);
         }
-
         // Area Chart Example
-        var ctx = document.getElementById("myAreaChart");
+        var ctx = document.getElementById("newChart");
         var myLineChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                datasets: [{
-                    label: "Earnings",
+                labels: @json($labels),
+                datasets: [
+                    {
+                    label: "تراکنش موفق",
                     lineTension: 0.3,
                     backgroundColor: "rgba(78, 115, 223, 0.05)",
                     borderColor: "rgba(78, 115, 223, 1)",
@@ -51,8 +52,24 @@
                     pointHoverBorderColor: "rgba(78, 115, 223, 1)",
                     pointHitRadius: 10,
                     pointBorderWidth: 2,
-                    data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
-                }],
+                    data: @json($succeded_transactions),
+                },
+                    {
+                    label: "تراکنش ناموفق",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(255,0,0,.05)",
+                    borderColor: "rgba(255,0,0,1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(255,0,0,1)",
+                    pointBorderColor: "rgba(255,0,0,1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(255,0,0,.8)",
+                    pointHoverBorderColor: "rgba(255,0,0,.7)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: @json($faild_transactions),
+                },
+            ],
             },
             options: {
                 maintainAspectRatio: false,
@@ -83,7 +100,7 @@
                             padding: 10,
                             // Include a dollar sign in the ticks
                             callback: function(value, index, values) {
-                                return '$' + number_format(value);
+                                return number_format(value)+" تومان ";
                             }
                         },
                         gridLines: {
@@ -115,7 +132,7 @@
                     callbacks: {
                         label: function(tooltipItem, chart) {
                             var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-                            return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            return  datasetLabel+" : "+number_format(tooltipItem.yLabel)+' T';
                         }
                     }
                 }
@@ -123,7 +140,7 @@
         });
 
     </script>
-
+    {{-- doughnut one --}}
     <script>
         // Set new default font family and font color to mimic Bootstrap's default styling
         Chart.defaults.global.defaultFontFamily = 'Nunito',
@@ -131,13 +148,13 @@
         Chart.defaults.global.defaultFontColor = '#858796';
 
         // Pie Chart Example
-        var ctx = document.getElementById("myPieChart");
+        var ctx = document.getElementById("myNewPieChart");
         var myPieChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ["Direct", "Referral", "Social"],
+                labels: ['موفق',"ناموفق"],
                 datasets: [{
-                    data: [55, 30, 15],
+                    data: @json($doughnut),
                     backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
                     hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
                     hoverBorderColor: "rgba(234, 236, 244, 1)",
@@ -162,7 +179,10 @@
             },
         });
 
+        console.log(@json($doughnut));
     </script>
+
+
 @endsection
 
 @section('content')
@@ -272,7 +292,7 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary"> لورم ایپسوم </h6>
+                    <h6 class="m-0 font-weight-bold text-primary"> تراکنش های یکسال گذشته </h6>
                     <div class="dropdown no-arrow">
                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
@@ -284,14 +304,14 @@
                             <a class="dropdown-item" href="#"> لورم </a>
                             <a class="dropdown-item" href="#"> لورم ایپسوم </a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#"> لورم ایپسوم متن ساختگی </a>
+                            <a class="dropdown-item" href="#"> gavekoos </a>
                         </div>
                     </div>
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
                     <div class="chart-area">
-                        <canvas id="myAreaChart"></canvas>
+                        <canvas id="newChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -302,7 +322,7 @@
             <div class="card shadow mb-4">
                 <!-- Card Header - Dropdown -->
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary"> لورم ایپسوم </h6>
+                    <h6 class="m-0 font-weight-bold text-primary"> تراکنش های موفق و ناموفق </h6>
                     <div class="dropdown no-arrow">
                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
@@ -321,18 +341,18 @@
                 <!-- Card Body -->
                 <div class="card-body">
                     <div class="chart-pie pt-4 pb-2">
-                        <canvas id="myPieChart"></canvas>
+                        <canvas id="myNewPieChart"></canvas>
                     </div>
                     <div class="mt-4 text-center small">
                         <span class="mr-2">
-                            <i class="fas fa-circle text-primary"></i> Direct
+                            <i class="fas fa-circle text-primary"></i> موفق
                         </span>
                         <span class="mr-2">
-                            <i class="fas fa-circle text-success"></i> Social
+                            <i class="fas fa-circle text-success"></i> ناموفق
                         </span>
-                        <span class="mr-2">
+                        {{-- <span class="mr-2">
                             <i class="fas fa-circle text-info"></i> Referral
-                        </span>
+                        </span> --}}
                     </div>
                 </div>
             </div>
